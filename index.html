@@ -5,33 +5,122 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>SAP 발주 생산계획 검증</title>
 <style>
-:root{--accent:#0066cc;--canvas:#fff;--surface:#f5f5f7;--panel:#fff;--ink:#1d1d1f;--muted:#6e6e73;--hairline:#e0e0e0;--danger:#d93025;--warn:#a45c00;--ok:#147a3d}
-*{box-sizing:border-box}body{margin:0;background:var(--canvas);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",Inter,"Segoe UI",sans-serif;font-size:15px;line-height:1.47}
-button,input,select{font:inherit}.shell{max-width:1480px;margin:0 auto;padding:32px 28px 72px}header{display:flex;justify-content:space-between;gap:24px;align-items:flex-start;margin-bottom:28px}
-.eyebrow{font-size:13px;color:var(--accent);font-weight:600;margin-bottom:8px}h1{font-size:34px;line-height:1.14;letter-spacing:-.6px;margin:0 0 10px;font-weight:600}.lead{margin:0;color:var(--muted);font-size:16px}.date-chip{white-space:nowrap;border:1px solid var(--hairline);border-radius:9999px;padding:10px 16px;background:var(--surface)}
-.tabs{position:sticky;top:0;z-index:5;display:flex;gap:8px;overflow:auto;padding:10px;background:rgba(245,245,247,.9);backdrop-filter:blur(20px);border-radius:14px;margin-bottom:24px}.tab{border:0;background:transparent;color:var(--muted);padding:9px 15px;border-radius:9999px;cursor:pointer;white-space:nowrap}.tab.active{background:var(--ink);color:white}.panel{display:none}.panel.active{display:block}
-.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:24px}.card{background:var(--panel);border:1px solid var(--hairline);border-radius:18px;padding:22px}.kpi-label{color:var(--muted);font-size:13px}.kpi-value{font-size:30px;font-weight:600;letter-spacing:-.4px;margin:8px 0 4px}.kpi-sub{color:var(--muted);font-size:13px}.risk .kpi-value{color:var(--danger)}
-.grid2{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:16px;margin-bottom:24px}h2{font-size:22px;letter-spacing:-.25px;margin:0 0 6px}h3{font-size:17px;margin:0 0 12px}.section-note{color:var(--muted);margin:0 0 18px}
-.alert-list{display:grid;gap:10px}.alert{border-left:4px solid var(--warn);background:#fff8ed;border-radius:10px;padding:13px 15px}.alert strong{display:block;margin-bottom:3px}.alert.danger{border-left-color:var(--danger);background:#fff4f3}.alert.ok{border-left-color:var(--ok);background:#f1fbf4}
-.bar-list{display:grid;gap:14px}.bar-head{display:flex;justify-content:space-between;gap:12px;margin-bottom:6px}.track{height:9px;background:#ececef;border-radius:9999px;overflow:hidden}.fill{height:100%;background:var(--accent);border-radius:9999px}.fill.gray{background:#9a9aa0}.muted{color:var(--muted)}
-.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 14px}.search,.filter{border:1px solid var(--hairline);background:white;border-radius:9999px;padding:10px 14px;min-width:240px}.filter{min-width:190px}.toggle{display:flex;align-items:center;gap:8px;border:1px solid var(--hairline);border-radius:9999px;padding:8px 13px;background:white}
-.table-wrap{border:1px solid var(--hairline);border-radius:18px;overflow:auto;max-height:620px;background:white;-webkit-user-select:text;user-select:text}table{width:max-content;min-width:100%;border-collapse:collapse}th{position:sticky;top:0;z-index:1;background:var(--surface);text-align:left;color:#4b4b50;font-size:12px;padding:11px 12px;border-bottom:1px solid var(--hairline);white-space:nowrap}td{padding:10px 12px;border-bottom:1px solid #eeeeef;vertical-align:middle;white-space:nowrap}tbody tr:hover{background:#fafafa}.num{text-align:right;font-variant-numeric:tabular-nums}.badge{display:inline-block;border-radius:9999px;padding:4px 8px;font-size:12px;background:#eaf3ff;color:#075caf;white-space:nowrap}.badge.risk{background:#fff0ee;color:#b42318}.badge.warn{background:#fff4df;color:#8b5000}.badge.additional{background:#f1edff;color:#5b36a8}.badge-stack{display:flex;flex-direction:row;align-items:center;gap:7px;white-space:nowrap}.risk-text{color:var(--danger);font-weight:600}.ok-text{color:var(--ok);font-weight:600}details{max-width:none}summary{cursor:pointer;color:var(--accent);white-space:nowrap}.order-table{min-width:2050px}.table-title{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.table-count{display:inline-flex;align-items:center;border-radius:9999px;padding:4px 9px;background:var(--surface);color:var(--muted);font-size:12px;white-space:nowrap}
-.tab-kpis{display:grid;grid-template-columns:repeat(2,minmax(0,320px));gap:12px;margin:0 0 18px}.tab-kpi{border:1px solid var(--hairline);border-radius:18px;padding:17px 20px;background:var(--surface)}.tab-kpi-label{display:block;color:var(--muted);font-size:13px;margin-bottom:5px}.tab-kpi-value{display:block;font-size:26px;line-height:1.2;letter-spacing:-.3px;font-weight:600;white-space:nowrap}.tab-kpi.risk .tab-kpi-value{color:var(--danger)}
-.method{display:grid;gap:12px}.method-row{display:grid;grid-template-columns:220px 1fr;gap:18px;padding:15px 0;border-bottom:1px solid var(--hairline)}code{background:var(--surface);padding:2px 6px;border-radius:6px}footer{margin-top:34px;color:var(--muted);font-size:12px}.empty{padding:40px;text-align:center;color:var(--muted)}
-.cause-btn{border:1px solid #9bc6f2;background:#f2f8ff;color:#075caf;border-radius:9999px;padding:7px 11px;cursor:pointer;white-space:nowrap;font-weight:600}.cause-btn:hover{background:#e4f1ff}.badge.cause{background:#eaf8ef;color:#116b36}
-.cause-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.cause-stat{border:1px solid var(--hairline);border-radius:14px;padding:16px;background:var(--surface)}.cause-stat strong{display:block;font-size:26px;margin:4px 0}.cause-stat.risk strong{color:var(--danger)}.cause-stat .stat-label{font-size:13px;color:var(--muted)}.cause-stat .stat-note{font-size:12px;color:var(--muted)}.cause-status-text{font-size:11px;color:var(--muted);white-space:nowrap}
-.modal-backdrop{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.42);display:none;align-items:center;justify-content:center;padding:24px}.modal-backdrop.open{display:flex}.modal{width:min(1040px,100%);max-height:90vh;overflow:auto;background:white;border-radius:22px;box-shadow:0 24px 80px rgba(0,0,0,.24);padding:28px}.modal-head{display:flex;justify-content:space-between;gap:24px;align-items:flex-start;margin-bottom:18px}.modal-head h2{margin-bottom:5px}.modal-close{border:0;background:var(--surface);width:38px;height:38px;border-radius:50%;font-size:22px;line-height:1;cursor:pointer;flex:0 0 auto}.cause-summary{background:#f1fbf4;border-left:4px solid var(--ok);border-radius:12px;padding:15px 17px;margin:0 0 20px}.cause-summary.abnormal{background:#fff4f3;border-left-color:var(--danger)}.cause-summary strong{display:block;margin:5px 0 4px}.judgment{display:inline-block;border-radius:9999px;padding:4px 9px;font-size:12px;background:#eaf8ef;color:#116b36}.judgment.abnormal{background:#fff0ee;color:#b42318}.evidence-block+ .evidence-block{border-top:1px solid var(--hairline);margin-top:24px;padding-top:24px}.evidence-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--hairline);border:1px solid var(--hairline);border-radius:14px;overflow:hidden}.evidence-item{background:white;padding:14px 16px;min-height:76px}.evidence-label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px}.evidence-value{font-weight:600;word-break:break-word}.detail-section{margin-top:22px}.dep-list{display:grid;gap:12px}.dep-card{border:1px solid var(--hairline);border-radius:14px;padding:15px;background:#fafafa}.dep-card h4{margin:0 0 12px;font-size:15px}.no-dep{border:1px dashed var(--hairline);border-radius:14px;padding:16px;color:var(--muted);background:#fafafa}.md04-table{min-width:760px}.md04-table th{position:static}.evidence-source{color:var(--muted);font-size:12px;margin:14px 2px 0}
-@media(max-width:980px){.kpis{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.cause-stats{grid-template-columns:repeat(2,1fr)}header{display:block}.date-chip{display:inline-block;margin-top:16px}}@media(max-width:600px){.shell{padding:22px 14px 52px}.kpis,.cause-stats,.tab-kpis{grid-template-columns:1fr}h1{font-size:28px}.method-row{grid-template-columns:1fr;gap:4px}.modal-backdrop{padding:10px}.modal{padding:20px}.evidence-grid{grid-template-columns:1fr}}
+:root{
+  --canvas:#faf9f5;--surface:#f5f0e8;--panel:#efe9de;--cream-strong:#e8e0d2;
+  --accent:#cc785c;--accent-active:#a9583e;--on-primary:#fff;
+  --dark:#181715;--dark-elevated:#252320;--dark-soft:#1f1e1b;
+  --on-dark:#faf9f5;--on-dark-muted:#a09d96;--dark-line:#3d3a35;
+  --ink:#141413;--body-strong:#252523;--body:#3d3d3a;--muted:#6c6a64;--muted-soft:#8e8b82;
+  --hairline:#e6dfd8;--hairline-soft:#ebe6df;
+  --danger:#c64545;--warn:#8a6410;--ok:#37604a;--success-dot:#5db872;--amber:#e8a55a;
+  --focus:rgba(204,120,92,.22);--overlay:rgba(24,23,21,.62);
+  --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text",Inter,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",Consolas,monospace;
+  --radius-control:8px;--radius-card:12px;--radius-hero:16px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--canvas);color:var(--body);font:400 15px/1.55 var(--sans)}
+::selection{background:var(--cream-strong);color:var(--ink)}
+button,input,select{font:inherit}button{cursor:pointer}strong{font-weight:600}
+button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--accent-active);outline-offset:3px;box-shadow:0 0 0 5px var(--focus)}
+.shell{max-width:1328px;margin:0 auto;padding:28px 32px 48px}
+.masthead{display:flex;justify-content:space-between;align-items:center;gap:16px;padding-bottom:20px;border-bottom:1px solid var(--hairline);font-size:13px;color:var(--muted)}
+.project-name{display:flex;align-items:center;gap:10px;font-weight:500;color:var(--ink)}
+.project-mark{width:12px;height:12px;display:inline-block;background:var(--accent);border-radius:3px}
+.edition-label{font-size:11px;letter-spacing:1.5px;white-space:nowrap}
+header{display:grid;grid-template-columns:minmax(0,1fr) 304px;gap:40px;align-items:center;padding:48px 0 36px}
+.eyebrow{font-size:12px;letter-spacing:1px;color:var(--accent-active);font-weight:600;margin-bottom:16px}
+h1,h2,h3{font-family:var(--sans);font-weight:600;color:var(--ink)}
+h1{font-size:clamp(32px,3.6vw,48px);line-height:1.22;letter-spacing:-1.5px;margin:0 0 18px}
+h2{font-size:30px;line-height:1.25;letter-spacing:-.8px;margin:0 0 12px;font-weight:700}
+h3{font-size:24px;line-height:1.3;letter-spacing:-.5px;margin:0 0 16px;font-weight:700}
+.lead{margin:0;color:var(--muted);font-size:16px;line-height:1.65;max-width:680px}
+.date-chip{background:var(--dark);color:var(--on-dark);border-radius:var(--radius-hero);padding:24px;white-space:nowrap}
+.date-row{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:6px 0}
+.date-row span{color:var(--on-dark-muted);font-size:12px}.date-row strong{font-weight:500;font-size:16px;font-variant-numeric:tabular-nums}
+.date-caption{font-size:11px;color:var(--on-dark-muted);border-top:1px solid var(--dark-line);margin-top:14px;padding-top:14px}
+.tabs{position:sticky;top:0;z-index:5;display:flex;gap:4px;overflow-x:auto;padding:10px 0 16px;background:var(--canvas);border-bottom:1px solid var(--hairline);margin-bottom:32px}
+.tab{border:1px solid transparent;background:transparent;color:var(--muted);padding:10px 14px;min-height:42px;border-radius:var(--radius-control);white-space:nowrap;font-size:14px;font-weight:500}
+.tab.active{background:var(--panel);border-color:var(--hairline);color:var(--ink)}
+.tab-count{display:inline-block;margin-left:6px;color:var(--accent-active);font-size:12px;font-variant-numeric:tabular-nums}
+.panel{display:none;min-width:0}.panel.active{display:block}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:32px}
+.card{min-width:0;background:var(--panel);border-radius:var(--radius-card);padding:32px}
+.kpis .card{padding:24px}.kpi-label{color:var(--muted);font-size:13px;font-weight:500;white-space:nowrap}
+.kpi-value{font-size:38px;line-height:1.2;font-weight:600;letter-spacing:-1px;margin:16px 0 10px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.kpi-sub{color:var(--muted);font-size:12px;line-height:1.6}.risk .kpi-value{color:var(--danger)}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;margin-bottom:32px}
+.section-note{color:var(--muted);margin:0 0 24px;font-size:14px;line-height:1.65}
+.alert-list{display:grid;gap:12px}
+.alert{border-left:2px solid var(--amber);background:var(--surface);border-radius:0 var(--radius-control) var(--radius-control) 0;padding:14px 16px;font-size:13px;color:var(--muted)}
+.alert strong{display:block;margin-bottom:5px;color:var(--body-strong);font-weight:700;font-size:15px}
+.alert.danger{border-left-color:var(--danger)}.alert.ok{border-left-color:var(--success-dot)}
+.bar-list{display:grid;gap:24px}.bar-head{display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;font-size:14px}
+.bar-head strong{font-weight:700;color:var(--body-strong)}.bar-head span{font-variant-numeric:tabular-nums;color:var(--muted);white-space:nowrap}
+.track{height:8px;background:var(--cream-strong);border-radius:4px;overflow:hidden}.fill{height:100%;background:var(--accent);border-radius:4px}.fill.gray{background:var(--muted-soft)}.muted{color:var(--muted)}
+.toolbar{display:flex;gap:12px;flex-wrap:wrap;margin:0 0 20px;align-items:center}
+.search,.filter{border:1px solid var(--hairline);background:var(--canvas);color:var(--ink);border-radius:var(--radius-control);padding:10px 14px;min-height:44px;min-width:240px;max-width:100%;font-size:14px}
+.search{flex:1;max-width:360px}.search::placeholder{color:var(--muted)}.filter{min-width:180px}
+.toggle{display:flex;align-items:center;gap:8px;border:1px solid var(--hairline);border-radius:var(--radius-control);padding:10px 14px;min-height:44px;background:var(--canvas);font-size:14px}
+input[type="checkbox"]{accent-color:var(--accent-active);width:16px;height:16px}
+.table-wrap{border:1px solid var(--hairline);border-radius:var(--radius-card);overflow:auto;max-height:620px;background:var(--canvas);-webkit-user-select:text;user-select:text;scrollbar-color:var(--cream-strong) var(--surface)}
+table{width:max-content;min-width:100%;border-collapse:collapse;font-size:14px}
+th{position:sticky;top:0;z-index:1;background:var(--dark);text-align:left;color:var(--on-dark);font-size:12px;font-weight:700;padding:15px 16px;border-bottom:1px solid var(--dark-line);white-space:nowrap}
+td{padding:13px 16px;border-bottom:1px solid var(--hairline-soft);vertical-align:middle;white-space:nowrap}
+tbody tr:nth-child(even){background:var(--surface)}tbody tr:last-child td{border-bottom:0}td strong{font-weight:700;color:var(--ink)}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.badge{display:inline-block;border:1px solid var(--hairline);border-radius:9999px;padding:4px 10px;font-size:12px;font-weight:500;background:var(--panel);color:var(--body);white-space:nowrap}
+.badge.risk{color:var(--danger)}.badge.warn{color:var(--warn)}.badge.additional{color:var(--accent-active)}.badge.cause{color:var(--ok)}
+.badge-stack{display:flex;flex-direction:row;align-items:center;gap:8px;white-space:nowrap}
+.risk-text{color:var(--danger);font-weight:600}.ok-text{color:var(--ok);font-weight:600}
+details{max-width:none}summary{cursor:pointer;color:var(--accent-active);white-space:nowrap}details[open] summary{margin-bottom:8px}
+.order-table{min-width:2050px}.table-title{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.table-count{display:inline-flex;align-items:center;border-radius:9999px;padding:4px 10px;background:var(--panel);color:var(--muted);font-size:12px;white-space:nowrap}
+.tab-kpis{display:grid;grid-template-columns:minmax(0,240px) minmax(0,400px);gap:16px;margin:0 0 28px}
+.tab-kpi{border-radius:var(--radius-card);padding:24px;background:var(--panel)}
+.tab-kpi-label{display:block;color:var(--muted);font-size:13px;font-weight:500;margin-bottom:12px;white-space:nowrap}
+.tab-kpi-value{display:block;font-size:34px;line-height:1.2;letter-spacing:-.8px;font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums;color:var(--ink)}
+.tab-kpi.risk .tab-kpi-value{color:var(--danger)}
+.tab-kpi:last-child{background:var(--dark)}.tab-kpi:last-child .tab-kpi-label{color:var(--on-dark-muted)}.tab-kpi:last-child .tab-kpi-value{color:var(--on-dark)}
+.method{display:grid;gap:4px}.method-row{display:grid;grid-template-columns:200px 1fr;gap:24px;padding:20px 0;border-bottom:1px solid var(--hairline);font-size:14px}.method-row:last-child{border-bottom:0}
+.method-row>strong{font-weight:700;color:var(--ink)}code{font-family:var(--mono);background:var(--cream-strong);padding:3px 6px;border-radius:4px;font-size:.93em}
+footer{display:flex;justify-content:space-between;gap:32px;margin-top:48px;padding:28px 32px;background:var(--dark);border-radius:var(--radius-card);color:var(--on-dark-muted);font-size:12px;line-height:1.7}
+.footer-title{color:var(--on-dark);font-size:13px;font-weight:500;white-space:nowrap}.empty{padding:48px;text-align:center;color:var(--muted)}
+.cause-btn{border:0;background:var(--accent-active);color:var(--on-primary);border-radius:var(--radius-control);padding:10px 16px;min-height:40px;white-space:nowrap;font-size:13px;font-weight:600}
+.cause-btn:active{background:var(--dark)}
+.cause-overview{background:var(--dark);margin-bottom:32px}.cause-overview h2{color:var(--on-dark)}.cause-overview>.section-note{color:var(--on-dark-muted)}
+.cause-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.cause-stat{border-radius:var(--radius-control);padding:20px;background:var(--dark-elevated)}
+.cause-stat strong{display:block;font-size:34px;font-weight:700;letter-spacing:-.7px;margin:12px 0;color:var(--on-dark);font-variant-numeric:tabular-nums}
+.cause-stat.risk strong{color:var(--accent)}.cause-stat .stat-label{font-size:12px;color:var(--on-dark);white-space:nowrap}.cause-stat .stat-note{font-size:12px;color:var(--on-dark-muted);line-height:1.6}
+.cause-status-text{font-size:11px;color:var(--muted);white-space:nowrap}
+.modal-backdrop{position:fixed;inset:0;z-index:50;background:var(--overlay);display:none;align-items:center;justify-content:center;padding:24px}.modal-backdrop.open{display:flex}
+.modal{width:min(1080px,100%);max-height:90vh;overflow:auto;background:var(--canvas);border-radius:var(--radius-hero);padding:32px}
+.modal-head{display:flex;justify-content:space-between;gap:24px;align-items:flex-start;margin-bottom:24px;border-bottom:1px solid var(--hairline)}.modal-head h2{margin-bottom:10px;font-size:28px}.modal-head .eyebrow{margin-bottom:12px}
+.modal-close{border:1px solid var(--hairline);background:var(--panel);color:var(--ink);width:40px;height:40px;border-radius:50%;font-size:24px;line-height:1;flex:0 0 auto}
+.cause-summary{background:var(--panel);border-left:3px solid var(--success-dot);border-radius:0 var(--radius-card) var(--radius-card) 0;padding:20px 24px;margin:0 0 32px;font-size:14px;line-height:1.7}
+.cause-summary.abnormal{border-left-color:var(--danger)}.cause-summary strong{display:block;margin:12px 0 6px;color:var(--ink);font-weight:700;font-size:18px}
+.judgment{display:inline-block;border:1px solid var(--hairline);border-radius:9999px;padding:4px 10px;font-size:12px;background:var(--canvas);color:var(--ok)}.judgment.abnormal{color:var(--danger)}
+.evidence-block+ .evidence-block{border-top:1px solid var(--hairline);margin-top:32px;padding-top:32px}
+.evidence-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--hairline);border:1px solid var(--hairline);border-radius:var(--radius-card);overflow:hidden}
+.evidence-item{background:var(--surface);padding:18px 20px;min-height:84px}
+.evidence-label{display:block;color:var(--muted);font-size:12px;margin-bottom:8px}.evidence-value{font-weight:600;color:var(--ink);word-break:break-word;font-variant-numeric:tabular-nums}
+.detail-section{margin-top:32px}.dep-list{display:grid;gap:16px}.dep-card{border:1px solid var(--hairline);border-radius:var(--radius-card);padding:20px;background:var(--panel)}.dep-card h4{margin:0 0 16px;font-size:14px;font-weight:700;color:var(--accent-active)}
+.no-dep{border:1px dashed var(--hairline);border-radius:var(--radius-card);padding:24px;color:var(--muted);background:var(--surface)}.md04-table{min-width:760px}.evidence-source{color:var(--muted);font-size:12px;margin:16px 2px 0}
+@media(max-width:1100px){header{grid-template-columns:1fr;gap:24px;padding-top:32px}.date-chip{max-width:440px;width:100%}.kpis,.cause-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.grid2{grid-template-columns:1fr}}
+@media(max-width:767px){.shell{padding:20px 16px 32px}.edition-label{display:none}header{padding:32px 0 24px}h1{font-size:32px;letter-spacing:-1px}h2{font-size:27px}h3{font-size:23px}.lead{font-size:14px}.tabs{margin-bottom:24px}.card{padding:24px}.kpis{gap:12px}.kpis .card{padding:20px}.kpi-value{font-size:32px}.grid2{gap:16px}.tab-kpis{grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:12px}.tab-kpi{padding:20px}.tab-kpi-value{font-size:28px}.evidence-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.method-row{grid-template-columns:1fr;gap:8px}footer{display:block;padding:24px}.footer-title{display:block;margin-bottom:12px}.modal-backdrop{padding:12px}.modal{padding:24px}.modal-head h2{font-size:24px}.bar-head{flex-wrap:wrap;gap:4px}}
+@media(max-width:480px){.kpis,.cause-stats,.tab-kpis,.evidence-grid{grid-template-columns:1fr}.search,.filter{width:100%;min-width:0;max-width:none}.modal{padding:20px}.modal-head{gap:12px}.modal-head h2{font-size:22px;overflow-wrap:anywhere}.cause-summary{padding:16px}.date-chip{padding:20px}}
 </style>
 </head>
 <body>
 <main class="shell">
+  <div class="masthead"><span class="project-name"><span class="project-mark" aria-hidden="true"></span>재고불일치 방지 구축</span><span class="edition-label">INVENTORY · DAILY REVIEW</span></div>
   <header>
-    <div><div class="eyebrow">재고불일치 방지 구축 · SAP ZMM11060</div><h1>SAP 발주 생산계획 검증</h1><p class="lead">구매오더 생성일의 전체 발주를 다음 생산일 KMES 계획·BOM 소요량과 비교합니다.</p></div>
-    <div class="date-chip">구매오더 생성일 2026-09-01<br>생산계획 기준일 2026-09-02<br><span class="muted">보고서 생성 2026-09-01 17:50:04</span></div>
+    <div><div class="eyebrow">SAP ZMM11060 × KMES · 생산계획 기반 검증</div><h1>SAP 발주 생산계획 검증</h1><p class="lead">구매오더 생성일의 전체 발주를 다음 생산일 KMES 계획·BOM 소요량과 비교합니다.</p></div>
+    <div class="date-chip"><div class="date-row"><span>구매오더 생성일</span><strong>2026-09-01</strong></div><div class="date-row"><span>생산계획 기준일</span><strong>2026-09-02</strong></div><div class="date-caption">보고서 생성 2026-09-01 17:50:04</div></div>
   </header>
   <nav class="tabs" aria-label="대시보드 탭">
-    <button class="tab active" data-panel="overview">개요</button><button class="tab" data-panel="abnormalOrders">비정상 발주 9</button><button class="tab" data-panel="normalOrders">정상 발주 43</button><button class="tab" data-panel="nonOem">OEM 외 발주</button><button class="tab" data-panel="production">생산계획·실적</button><button class="tab" data-panel="bom">BOM 연결</button><button class="tab" data-panel="method">검증기준</button>
+    <button class="tab active" data-panel="overview">개요</button><button class="tab" data-panel="abnormalOrders">비정상 발주 <span class="tab-count">9</span></button><button class="tab" data-panel="normalOrders">정상 발주 <span class="tab-count">43</span></button><button class="tab" data-panel="nonOem">OEM 외 발주</button><button class="tab" data-panel="production">생산계획·실적</button><button class="tab" data-panel="bom">BOM 연결</button><button class="tab" data-panel="method">검증기준</button>
   </nav>
 
   <section id="overview" class="panel active">
@@ -54,7 +143,7 @@ button,input,select{font:inherit}.shell{max-width:1480px;margin:0 auto;padding:3
         <div class="alert ok"><strong>OEM 외 발주 0종</strong>OEM으로 확인되지 않은 구매그룹은 별도 탭에서 확인합니다.</div>
       </div></article>
     </div>
-    <article class="card" style="margin-bottom:24px"><h2>SAP MD04 발주 원인</h2><p class="section-note">52개 확인대상을 현재 재고·안전재고·종속소요·구매오더까지 연결했습니다. 이상 원인 9종, 생산계획 외 정상 사유 43종입니다.</p><div class="cause-stats">
+    <article class="card cause-overview"><h2>SAP MD04 발주 원인</h2><p class="section-note">52개 확인대상을 현재 재고·안전재고·종속소요·구매오더까지 연결했습니다. 이상 원인 9종, 생산계획 외 정상 사유 43종입니다.</p><div class="cause-stats">
       <div class="cause-stat risk"><div class="stat-label">과거 미결 종속소요</div><strong>9종</strong><div class="stat-note">삭제되지 않은 과거 요구량으로 판단</div></div>
       <div class="cause-stat"><div class="stat-label">안전재고 보충</div><strong>20종</strong><div class="stat-note">생산계획과 별개인 정상 MRP 보충</div></div>
       <div class="cause-stat"><div class="stat-label">2026-09-01 당일 종속소요</div><strong>23종</strong><div class="stat-note">D-1 기준 밖의 당일 생산 요구량</div></div>
@@ -109,7 +198,7 @@ button,input,select{font:inherit}.shell{max-width:1480px;margin:0 auto;padding:3
       <div class="method-row"><strong>필수 조회조건</strong><span>`[1-2] 생산실적 현황`은 공장 Seat, 작업반 전체, 라인 전체, 조회단위 <strong>일</strong>로 내려받아야 합니다.</span></div>
     </div></article>
   </section>
-  <footer>모든 데이터와 화면 기능은 이 HTML 안에 포함되어 있습니다. 원본: KMES 작업지시·일별 생산실적, ALC BOM, SAP 발주 파일.</footer>
+  <footer><span class="footer-title">재고불일치 방지 구축</span><span>모든 데이터와 화면 기능은 이 HTML 안에 포함되어 있습니다.<br>원본: KMES 작업지시·일별 생산실적, ALC BOM, SAP 발주 파일.</span></footer>
 </main>
 <div id="causeModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="causeModalTitle" aria-hidden="true">
   <div class="modal" role="document">
